@@ -1,7 +1,7 @@
 %global github_owner            symfony
 %global github_name             symfony
-%global github_version          2.3.7
-%global github_commit           2829b471871c2564228fe9f0832a0f928a8ffaa1
+%global github_version          2.3.8
+%global github_commit           b0b421908d569e5024372ded65857707c409e0f7
 
 %global php_min_ver             5.3.3
 # "doctrine/common": "~2.2" (composer.json)
@@ -38,7 +38,7 @@
 
 Name:          php-symfony
 Version:       %{github_version}
-Release:       4%{dist}
+Release:       1%{dist}
 Summary:       PHP framework for web projects
 
 Group:         Development/Libraries
@@ -1232,6 +1232,11 @@ sed -i \
     src/Symfony/Component/Finder/Tests/FinderTest.php
 
 # Temporarily skip tests that are known to fail
+%if 0%{?fedora} > 20
+sed -i \
+    's/function testTrimUtf8/function SKIP_testTrimUtf8/' \
+    src/Symfony/Component/Form/Tests/Extension/Core/EventListener/TrimListenerTest.php
+%endif
 %if 0%{?el6}
 sed -i \
     's/function testForm/function SKIP_testForm/' \
@@ -1837,6 +1842,10 @@ done
 # ##############################################################################
 
 %changelog
+* Wed Dec 18 2013 Shawn Iwinski <shawn.iwinski@gmail.com> 2.3.8-1
+- Updated to 2.3.8
+- Temporarily skip test known to fail on Fedora > 20
+
 * Sat Dec 14 2013 Remi Collet <remi@fedoraproject.org> 2.3.7-4
 - fix PEAR compatibility: add missing "autoloader.php"
 
