@@ -1,7 +1,7 @@
 %global github_owner            symfony
 %global github_name             symfony
-%global github_version          2.3.8
-%global github_commit           b0b421908d569e5024372ded65857707c409e0f7
+%global github_version          2.3.9
+%global github_commit           ee1e0f2ef882ccd6a53ff91e5ffc39a22b6a6b74
 
 %global php_min_ver             5.3.3
 # "doctrine/common": "~2.2" (composer.json)
@@ -38,7 +38,7 @@
 
 Name:          php-symfony
 Version:       %{github_version}
-Release:       1%{dist}
+Release:       1%{?dist}
 Summary:       PHP framework for web projects
 
 Group:         Development/Libraries
@@ -1197,7 +1197,7 @@ ln -s %{name}-common-%{version} %{buildroot}%{_docdir}/%{name}-%{version}
 %check
 # Create tests' autoloader
 mkdir vendor
-( cat <<'AUTOLOADER'
+cat > vendor/autoload.php <<'AUTOLOADER'
 <?php
 
 require_once __DIR__.'/../src/Symfony/Component/ClassLoader/UniversalClassLoader.php';
@@ -1219,17 +1219,17 @@ if (file_exists('%{_datadir}/php/password_compat/password.php')) {
 
 return $loader;
 AUTOLOADER
-) > vendor/autoload.php
 
 # Create PHPUnit config w/ colors turned off
-cat phpunit.xml.dist \
-    | sed 's/colors="true"/colors="false"/' \
-    > phpunit.xml
+sed 's/colors="true"/colors="false"/' phpunit.xml.dist > phpunit.xml
 
 # Skip tests that rely on external resources
 sed -i \
     's/function testNonSeekableStream/function SKIP_testNonSeekableStream/' \
     src/Symfony/Component/Finder/Tests/FinderTest.php
+sed -i \
+    's/function testCopyForOriginUrlsAndExistingLocalFileDefaultsToNotCopy/function SKIP_testCopyForOriginUrlsAndExistingLocalFileDefaultsToNotCopy/' \
+    src/Symfony/Component/Filesystem/Tests/FilesystemTest.php
 
 # Temporarily skip tests that are known to fail
 %if 0%{?fedora} > 20
@@ -1245,6 +1245,9 @@ sed -i \
     -e 's/function testConstructorHandlesFormAttribute/function SKIP_testConstructorHandlesFormAttribute/' \
     -e 's/function testConstructorHandlesFormValues/function SKIP_testConstructorHandlesFormValues/' \
     src/Symfony/Component/DomCrawler/Tests/FormTest.php
+sed -i \
+    's/function testSetContent/function SKIP_testSetContent/' \
+    src/Symfony/Component/HttpFoundation/Tests/JsonResponseTest.php
 rm -f src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/NativeFileSessionHandlerTest.php
 %endif
 
@@ -1842,6 +1845,13 @@ done
 # ##############################################################################
 
 %changelog
+* Sun Jan 05 2014 Shawn Iwinski <shawn.iwinski@gmail.com> 2.3.9-1
+- Updated to 2.3.9
+- Conditional %%{?dist}
+- Minor bash cosmetic changes
+- Skip additional test relying on external resources
+- Skip additional el6 test
+
 * Wed Dec 18 2013 Shawn Iwinski <shawn.iwinski@gmail.com> 2.3.8-1
 - Updated to 2.3.8
 - Temporarily skip test known to fail on Fedora > 20
