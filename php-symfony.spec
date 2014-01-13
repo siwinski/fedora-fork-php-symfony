@@ -34,11 +34,12 @@
 
 %global symfony_dir             %{_datadir}/php/Symfony
 %global pear_channel            pear.symfony.com
-%global with_tests              %{?_without_tests:0}%{!?_without_tests:1}
+#global with_tests              %{?_without_tests:0}%{!?_without_tests:1}
+%global with_tests              0
 
 Name:          php-symfony
 Version:       %{github_version}
-Release:       1%{?dist}
+Release:       0%{?dist}
 Summary:       PHP framework for web projects
 
 Group:         Development/Libraries
@@ -52,6 +53,7 @@ Source1:       getautoloader.sh
 Source2:       autoloader-%{version}.tgz
 
 BuildArch:     noarch
+%if %{with_tests}
 # For tests
 BuildRequires: php(language) >= %{php_min_ver}
 BuildRequires: php-Monolog   >= %{monolog_min_ver}
@@ -102,6 +104,7 @@ BuildRequires: php-spl
 BuildRequires: php-sqlite3
 BuildRequires: php-tokenizer
 BuildRequires: php-xml
+%endif
 
 # Bridges
 Requires:      %{name}-doctrinebridge      = %{version}-%{release}
@@ -1845,6 +1848,9 @@ done
 # ##############################################################################
 
 %changelog
+* Mon Jan 13 2014 Remi Collet <remi@fedoraproject.org> 2.3.9-0
+- EPEL-7 bootstrap build
+
 * Sun Jan 05 2014 Shawn Iwinski <shawn.iwinski@gmail.com> 2.3.9-1
 - Updated to 2.3.9
 - Conditional %%{?dist}
