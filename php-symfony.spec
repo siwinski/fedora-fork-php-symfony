@@ -1,7 +1,7 @@
 %global github_owner            symfony
 %global github_name             symfony
-%global github_version          2.3.9
-%global github_commit           ee1e0f2ef882ccd6a53ff91e5ffc39a22b6a6b74
+%global github_version          2.4.2
+%global github_commit           b70633f92ff71ef490af4c17e7ca3f3bf3d0f304
 
 %global php_min_ver             5.3.3
 # "doctrine/common": "~2.2" (composer.json)
@@ -28,18 +28,17 @@
 # "symfony/icu": "~1.0" (composer.json)
 %global symfony_icu_min_ver     1.0
 %global symfony_icu_max_ver     2.0
-# "twig/twig": "~1.11" (composer.json)
-%global twig_min_ver            1.11
+# "twig/twig": "~1.12" (src/Symfony/Bridge/Twig/composer.json)
+%global twig_min_ver            1.12
 %global twig_max_ver            2.0
 
 %global symfony_dir             %{_datadir}/php/Symfony
 %global pear_channel            pear.symfony.com
-#global with_tests              %{?_without_tests:0}%{!?_without_tests:1}
-%global with_tests              0
+%global with_tests              %{?_without_tests:0}%{!?_without_tests:1}
 
 Name:          php-symfony
 Version:       %{github_version}
-Release:       0%{?dist}
+Release:       1%{?dist}
 Summary:       PHP framework for web projects
 
 Group:         Development/Libraries
@@ -47,8 +46,8 @@ License:       MIT
 URL:           http://symfony.com
 Source0:       https://github.com/%{github_owner}/%{github_name}/archive/%{github_commit}/%{name}-%{github_version}-%{github_commit}.tar.gz
 
-# Run this command to download the PEAR package
-# and retrieve missing files github archive
+# Run this command to download the PEAR packages
+# and retrieve files missing from github archive
 Source1:       getautoloader.sh
 Source2:       autoloader-%{version}.tgz
 
@@ -71,7 +70,7 @@ BuildRequires: php-pear(pear.doctrine-project.org/DoctrineORM)    >= %{doctrine_
 BuildRequires: php-pear(pear.doctrine-project.org/DoctrineORM)    <  %{doctrine_orm_max_ver}
 BuildRequires: php-pear(pear.twig-project.org/Twig)               >= %{twig_min_ver}
 BuildRequires: php-pear(pear.twig-project.org/Twig)               <  %{twig_max_ver}
-%if 0%{?el6}
+%if 0%{?el6}%{?el7}
 BuildRequires: php-password-compat >= %{password_compat_min_ver}
 BuildRequires: php-password-compat <  %{password_compat_max_ver}
 %endif
@@ -178,8 +177,9 @@ Requires: php-pear(pear.doctrine-project.org/DoctrineDBAL)   >= %{doctrine_dbal_
 Requires: php-pear(pear.doctrine-project.org/DoctrineDBAL)   <  %{doctrine_dbal_max_ver}
 Requires: php-pear(pear.doctrine-project.org/DoctrineORM)    >= %{doctrine_orm_min_ver}
 Requires: php-pear(pear.doctrine-project.org/DoctrineORM)    <  %{doctrine_orm_max_ver}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires: php-date
+Requires: php-hash
 Requires: php-json
 Requires: php-mbstring
 Requires: php-pcre
@@ -204,10 +204,14 @@ http://symfony.com/doc/current/reference/configuration/doctrine.html
 
 Summary:  Symfony Monolog Bridge
 
-Requires: %{name}-httpkernel =  %{version}-%{release}
-Requires: php-Monolog        >= %{monolog_min_ver}
-Requires: php-Monolog        <  %{monolog_max_ver}
-# phpcompatinfo
+Requires: php-Monolog >= %{monolog_min_ver}
+Requires: php-Monolog <  %{monolog_max_ver}
+# Optional
+Requires: %{name}-console         = %{version}-%{release}
+Requires: %{name}-eventdispatcher = %{version}-%{release}
+Requires: %{name}-httpkernel      = %{version}-%{release}
+# phpcompatinfo (computed from v2.4.2)
+Requires: php-date
 Requires: php-pcre
 
 # PEAR
@@ -243,9 +247,6 @@ http://symfony.com/doc/current/reference/configuration/monolog.html
 
 #Requires: %%{name}-dependencyinjection = %%{version}-%%{release}
 ## ocramius/proxy-manager >=0.3.1,<0.4-dev
-## phpcompatinfo
-#Requires: php-reflection
-#Requires: php-spl
 
 #%%description proxymanagerbridge
 #Provides integration for ProxyManager (https://github.com/Ocramius/ProxyManager)
@@ -261,6 +262,8 @@ Requires: php-pear(pear.swiftmailer.org/Swift) >= %{swift_min_ver}
 Requires: php-pear(pear.swiftmailer.org/Swift) <  %{swift_max_ver}
 # Optional
 Requires: %{name}-httpkernel = %{version}-%{release}
+# phpcompatinfo (computed from v2.4.2)
+# <none>
 
 %description swiftmailerbridge
 Provides integration for Swift Mailer (http://swiftmailer.org/) with various
@@ -275,18 +278,22 @@ http://symfony.com/doc/current/reference/configuration/swiftmailer.html
 
 Summary:  Symfony Twig Bridge
 
+Requires: %{name}-security-csrf                =  %{version}-%{release}
 Requires: php-pear(pear.twig-project.org/Twig) >= %{twig_min_ver}
 Requires: php-pear(pear.twig-project.org/Twig) <  %{twig_max_ver}
 # Optional
-Requires: %{name}-form        = %{version}-%{release}
-Requires: %{name}-httpkernel  = %{version}-%{release}
-Requires: %{name}-routing     = %{version}-%{release}
-Requires: %{name}-security    = %{version}-%{release}
-Requires: %{name}-templating  = %{version}-%{release}
-Requires: %{name}-translation = %{version}-%{release}
-Requires: %{name}-yaml        = %{version}-%{release}
-# phpcompatinfo
+Requires: %{name}-expressionlanguage = %{version}-%{release}
+Requires: %{name}-form               = %{version}-%{release}
+Requires: %{name}-httpkernel         = %{version}-%{release}
+Requires: %{name}-routing            = %{version}-%{release}
+Requires: %{name}-security           = %{version}-%{release}
+Requires: %{name}-stopwatch          = %{version}-%{release}
+Requires: %{name}-templating         = %{version}-%{release}
+Requires: %{name}-translation        = %{version}-%{release}
+Requires: %{name}-yaml               = %{version}-%{release}
+# phpcompatinfo (computed from v2.4.2)
 Requires: php-pcre
+Requires: php-reflection
 Requires: php-spl
 
 # PEAR
@@ -306,8 +313,11 @@ Requires: %{name}-config              = %{version}-%{release}
 Requires: %{name}-dependencyinjection = %{version}-%{release}
 Requires: %{name}-eventdispatcher     = %{version}-%{release}
 Requires: %{name}-filesystem          = %{version}-%{release}
+Requires: %{name}-httpfoundation      = %{version}-%{release}
 Requires: %{name}-httpkernel          = %{version}-%{release}
 Requires: %{name}-routing             = %{version}-%{release}
+Requires: %{name}-security-core       = %{version}-%{release}
+Requires: %{name}-security-csrf       = %{version}-%{release}
 Requires: %{name}-stopwatch           = %{version}-%{release}
 Requires: %{name}-templating          = %{version}-%{release}
 Requires: %{name}-translation         = %{version}-%{release}
@@ -318,14 +328,15 @@ Requires: %{name}-console             = %{version}-%{release}
 Requires: %{name}-finder              = %{version}-%{release}
 Requires: %{name}-form                = %{version}-%{release}
 Requires: %{name}-validator           = %{version}-%{release}
-# phpcompatinfo
-Requires: php-date
+# phpcompatinfo (computed from v2.4.2)
+Requires: php-dom
 Requires: php-fileinfo
 Requires: php-filter
+Requires: php-hash
 Requires: php-json
+Requires: php-mbstring
 Requires: php-pcre
 Requires: php-reflection
-Requires: php-session
 Requires: php-spl
 Requires: php-tokenizer
 
@@ -346,7 +357,7 @@ Summary:  Symfony Security Bundle
 
 Requires: %{name}-httpkernel = %{version}-%{release}
 Requires: %{name}-security   = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires: php-pcre
 Requires: php-spl
 
@@ -361,7 +372,7 @@ Summary:  Symfony Twig Bundle
 
 Requires: %{name}-httpkernel = %{version}-%{release}
 Requires: %{name}-twigbridge = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires: php-ctype
 Requires: php-reflection
 Requires: php-spl
@@ -381,8 +392,9 @@ Summary:  Symfony WebProfiler Bundle
 Requires: %{name}-httpkernel = %{version}-%{release}
 Requires: %{name}-routing    = %{version}-%{release}
 Requires: %{name}-twigbridge = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires: php-pcre
+Requires: php-reflection
 Requires: php-spl
 
 %description webprofilerbundle
@@ -400,9 +412,10 @@ Summary:   Symfony BrowserKit Component
 Requires:  %{name}-domcrawler = %{version}-%{release}
 # Optional
 Requires:  %{name}-process    = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-date
 Requires:  php-pcre
+Requires:  php-reflection
 Requires:  php-spl
 
 # PEAR
@@ -425,7 +438,9 @@ Summary:   Symfony ClassLoader Component
 URL:       http://symfony.com/doc/current/components/class_loader/index.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
+Requires:  php-date
+Requires:  php-hash
 Requires:  php-pcre
 Requires:  php-reflection
 Requires:  php-spl
@@ -453,7 +468,9 @@ If your classes and the third-party libraries you use for your project follow
 these standards, the Symfony autoloader is the only autoloader you will ever
 need.
 
-Optional: APC, XCache
+Optional:
+* APC (php-pecl-apcu)
+* XCache (php-xcache)
 
 [1] http://symfony.com/PSR0
 [2] http://pear.php.net/manual/en/standards.php
@@ -466,12 +483,14 @@ Summary:   Symfony Config Component
 URL:       http://symfony.com/doc/current/components/config/index.html
 
 Requires:  %{name}-filesystem = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-ctype
+Requires:  php-date
 Requires:  php-dom
 Requires:  php-json
 Requires:  php-libxml
 Requires:  php-pcre
+Requires:  php-reflection
 Requires:  php-spl
 
 # PEAR
@@ -494,7 +513,7 @@ URL:       http://symfony.com/doc/current/components/console/index.html
 
 # Optional
 Requires:  %{name}-eventdispatcher = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-date
 Requires:  php-dom
 Requires:  php-json
@@ -502,6 +521,7 @@ Requires:  php-mbstring
 Requires:  php-pcre
 Requires:  php-posix
 Requires:  php-readline
+Requires:  php-reflection
 Requires:  php-spl
 
 # PEAR
@@ -526,9 +546,13 @@ Summary:   Symfony CssSelector Component
 URL:       http://symfony.com/doc/current/components/css_selector.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
+Requires:  php-dom
+Requires:  php-libxml
 Requires:  php-mbstring
 Requires:  php-pcre
+Requires:  php-reflection
+Requires:  php-simplexml
 
 # PEAR
 Provides:  php-pear(%{pear_channel}/CssSelector) = %{version}
@@ -541,19 +565,16 @@ The CssSelector Component converts CSS selectors to XPath expressions.
 
 # ------------------------------------------------------------------------------
 
-## TODO: xdebug optional?  NOTE: HttpKernel requires this component
-
 %package  debug
 
 Summary:  Symfony Debug Component
 URL:      http://symfony.com/doc/current/components/debug.html
 
 # Optional
-Requires: %{name}-classloader    = %{version}-%{release}
 Requires: %{name}-httpfoundation = %{version}-%{release}
 Requires: %{name}-httpkernel     = %{version}-%{release}
-# phpcompatinfo
-#Requires: php-pecl(xdebug)
+# phpcompatinfo (computed from v2.4.2)
+Requires: php-reflection
 Requires: php-spl
 
 # PEAR
@@ -561,6 +582,9 @@ Provides: php-pear(%{pear_channel}/Debug) = %{version}
 
 %description debug
 The Debug Component provides tools to ease debugging PHP code.
+
+Optional:
+* Xdebug (php-pecl-xdebug)
 
 # ------------------------------------------------------------------------------
 
@@ -573,8 +597,9 @@ URL:       http://symfony.com/doc/current/components/dependency_injection/index.
 Requires:  %{name}-config = %{version}-%{release}
 #Requires:  %%{name}-proxymanagerbridge = %%{version}-%%{release}
 Requires:  %{name}-yaml   = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-dom
+Requires:  php-hash
 Requires:  php-pcre
 Requires:  php-reflection
 Requires:  php-simplexml
@@ -599,7 +624,7 @@ URL:       http://symfony.com/doc/current/components/dom_crawler.html
 
 # Optional
 Requires:  %{name}-cssselector = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-dom
 Requires:  php-libxml
 Requires:  php-mbstring
@@ -625,7 +650,7 @@ URL:       http://symfony.com/doc/current/components/event_dispatcher/index.html
 # Optional
 Requires:  %{name}-dependencyinjection = %{version}-%{release}
 Requires:  %{name}-httpkernel          = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-spl
 
 # PEAR
@@ -643,14 +668,36 @@ projects truly extensible.
 
 # ------------------------------------------------------------------------------
 
+%package   expressionlanguage
+
+Summary:   Symfony ExpressionLanguage Component
+URL:       http://symfony.com/doc/current/components/expression_language/index.html
+
+# phpcompatinfo (computed from v2.4.2)
+Requires:  php-ctype
+Requires:  php-pcre
+Requires:  php-spl
+
+# PEAR
+Provides:  php-pear(%{pear_channel}/ExpressionLanguage) = %{version}
+
+%description expressionlanguage
+The ExpressionLanguage component provides an engine that can compile and
+evaluate expressions. An expression is a one-liner that returns a value
+(mostly, but not limited to, Booleans).
+
+# ------------------------------------------------------------------------------
+
 %package   filesystem
 
 Summary:   Symfony Filesystem Component
 URL:       http://symfony.com/doc/current/components/filesystem.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-ctype
+Requires:  php-date
+Requires:  php-posix
 Requires:  php-spl
 
 # PEAR
@@ -670,7 +717,7 @@ Summary:   Symfony Finder Component
 URL:       http://symfony.com/doc/current/components/finder.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-date
 Requires:  php-pcre
 Requires:  php-spl
@@ -697,14 +744,19 @@ Requires:  %{name}-optionsresolver = %{version}-%{release}
 Requires:  %{name}-propertyaccess  = %{version}-%{release}
 # Optional
 Requires:  %{name}-httpfoundation  = %{version}-%{release}
-Requires:  %{name}-validator       = %{version}-%{release}
-# phpcompatinfo
+Requires:  %{name}-security-csrf   = %{version}-%{release}
+Requires:  %{name}-twigbridge      = %{version}-%{release}
+Requires:  %{name}-frameworkbundle = %{version}-%{release}
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-ctype
 Requires:  php-date
+Requires:  php-dom
+Requires:  php-hash
 Requires:  php-intl
 Requires:  php-json
 Requires:  php-mbstring
 Requires:  php-pcre
+Requires:  php-reflection
 Requires:  php-session
 Requires:  php-spl
 
@@ -727,13 +779,16 @@ Summary:   Symfony HttpFoundation Component
 URL:       http://symfony.com/doc/current/components/http_foundation/index.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-date
 Requires:  php-fileinfo
 Requires:  php-filter
+Requires:  php-hash
+Requires:  php-intl
 Requires:  php-json
 Requires:  php-pcre
 Requires:  php-pdo
+Requires:  php-reflection
 Requires:  php-session
 Requires:  php-sockets
 Requires:  php-spl
@@ -755,7 +810,10 @@ functions (echo, header, setcookie, ...).
 The Symfony HttpFoundation component replaces these default PHP global
 variables and functions by an Object-Oriented layer.
 
-Optional: memcache, memcached, mongo
+Optional:
+* Memcache (php-pecl-memcache)
+* Memcached (php-pecl-memcached)
+* Mongo (php-pecl-mongo)
 
 # ------------------------------------------------------------------------------
 
@@ -776,13 +834,15 @@ Requires:  %{name}-config              =  %{version}-%{release}
 Requires:  %{name}-console             =  %{version}-%{release}
 Requires:  %{name}-dependencyinjection =  %{version}-%{release}
 Requires:  %{name}-finder              =  %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-date
 Requires:  php-hash
 Requires:  php-json
+Requires:  php-mbstring
 Requires:  php-pcre
 Requires:  php-pdo
 Requires:  php-reflection
+Requires:  php-session
 Requires:  php-spl
 Requires:  php-sqlite3
 Requires:  php-tokenizer
@@ -802,7 +862,12 @@ advanced CMS system (Drupal).
 Configuration reference:
 http://symfony.com/doc/current/reference/configuration/kernel.html
 
-Optional: memcache, memcached, redis, Zend OPcache
+Optional:
+* Memcache (php-pecl-memcache)
+* Memcached (php-pecl-memcached)
+* Mongo (php-pecl-mongo)
+* Redis (php-pecl-redis)
+* Zend OPcache (php-opcache)
 
 # ------------------------------------------------------------------------------
 
@@ -814,7 +879,7 @@ URL:       http://symfony.com/doc/current/components/intl.html
 Requires:  %{name}-common =  %{version}-%{release}
 Requires:  %{name}-icu    >= %{symfony_icu_min_ver}
 Requires:  %{name}-icu    <  %{symfony_icu_max_ver}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-date
 Requires:  php-intl
 Requires:  php-pcre
@@ -841,8 +906,8 @@ to the localization data of the ICU library [2].
 
 Summary:   Symfony Locale Component
 
-Requires:  %{name}-intl   = %{version}-%{release}
-# phpcompatinfo
+Requires:  %{name}-intl = %{version}-%{release}
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-intl
 
 # PEAR
@@ -866,7 +931,7 @@ Summary:   Symfony OptionsResolver Component
 URL:       http://symfony.com/doc/current/components/options_resolver.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-reflection
 Requires:  php-spl
 
@@ -888,9 +953,11 @@ Summary:   Symfony Process Component
 URL:       http://symfony.com/doc/current/components/process.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-pcntl
 Requires:  php-pcre
+Requires:  php-posix
+Requires:  php-reflection
 Requires:  php-spl
 
 # PEAR
@@ -900,7 +967,7 @@ Obsoletes: %{name}2-Process < %{version}
 Provides:  %{name}2-Process = %{version}
 
 %description process
-The Process Component executes commands in sub-processes.
+The Process component executes commands in sub-processes.
 
 # ------------------------------------------------------------------------------
 
@@ -910,7 +977,7 @@ Summary:   Symfony PropertyAccess Component
 URL:       http://symfony.com/doc/current/components/property_access/introduction.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-ctype
 Requires:  php-pcre
 Requires:  php-reflection
@@ -934,11 +1001,12 @@ Summary:   Symfony Routing Component
 URL:       http://symfony.com/doc/current/components/routing/index.html
 
 # Optional
-Requires:  %{name}-config = %{version}-%{release}
-Requires:  %{name}-yaml   = %{version}-%{release}
+Requires:  %{name}-config             = %{version}-%{release}
+Requires:  %{name}-expressionlanguage = %{version}-%{release}
+Requires:  %{name}-yaml               = %{version}-%{release}
 Requires:  php-pear(pear.doctrine-project.org/DoctrineCommon) >= %{doctrine_common_min_ver}
 Requires:  php-pear(pear.doctrine-project.org/DoctrineCommon) <  %{doctrine_common_max_ver}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-dom
 Requires:  php-pcre
 Requires:  php-reflection
@@ -961,30 +1029,37 @@ The Routing Component maps an HTTP request to a set of configuration variables.
 Summary:   Symfony Security Component
 URL:       http://symfony.com/doc/current/components/security/index.html
 
-Requires:  %{name}-eventdispatcher =  %{version}-%{release}
-Requires:  %{name}-httpfoundation  =  %{version}-%{release}
-Requires:  %{name}-httpkernel      =  %{version}-%{release}
-%if 0%{?el6}
-Requires:   php-password-compat    >= %{password_compat_min_ver}
-Requires:   php-password-compat    <  %{password_compat_max_ver}
-%endif
+Requires:  %{name}-eventdispatcher    = %{version}-%{release}
+Requires:  %{name}-httpfoundation     = %{version}-%{release}
+Requires:  %{name}-httpkernel         = %{version}-%{release}
 # Optional
-Requires:  %{name}-classloader     =  %{version}-%{release}
-Requires:  %{name}-finder          =  %{version}-%{release}
-Requires:  %{name}-form            =  %{version}-%{release}
-Requires:  %{name}-routing         =  %{version}-%{release}
-Requires:  %{name}-validator       =  %{version}-%{release}
+Requires:  %{name}-classloader        = %{version}-%{release}
+Requires:  %{name}-expressionlanguage = %{version}-%{release}
+Requires:  %{name}-finder             = %{version}-%{release}
+Requires:  %{name}-routing            = %{version}-%{release}
+Requires:  %{name}-validator          = %{version}-%{release}
 Requires:  php-pear(pear.doctrine-project.org/DoctrineDBAL) >= %{doctrine_dbal_min_ver}
 Requires:  php-pear(pear.doctrine-project.org/DoctrineDBAL) <  %{doctrine_dbal_max_ver}
-# phpcompatinfo
+%if 0%{?el6}%{?el7}
+Requires:  php-password-compat >= %{password_compat_min_ver}
+Requires:  php-password-compat <  %{password_compat_max_ver}
+%endif
+# phpcompatinfo (computed from v2.4.2)
+Requires:  php-ctype
 Requires:  php-date
 Requires:  php-hash
 Requires:  php-json
 Requires:  php-openssl
 Requires:  php-pcre
 Requires:  php-reflection
+Requires:  php-session
 Requires:  php-spl
 
+# Composer sub-packages
+Provides:  %{name}-security-acl  = %{version}-%{release}
+Provides:  %{name}-security-core = %{version}-%{release}
+Provides:  %{name}-security-csrf = %{version}-%{release}
+Provides:  %{name}-security-http = %{version}-%{release}
 # PEAR
 Provides:  php-pear(%{pear_channel}/Security) = %{version}
 # Rename
@@ -1007,8 +1082,9 @@ Summary:   Symfony Serializer Component
 URL:       http://symfony.com/doc/current/components/serializer.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-ctype
+Requires:  php-date
 Requires:  php-dom
 Requires:  php-json
 Requires:  php-libxml
@@ -1035,7 +1111,7 @@ Summary:  Symfony Stopwatch Component
 URL:      http://symfony.com/doc/current/components/stopwatch.html
 
 Requires: %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires: php-spl
 
 # PEAR
@@ -1051,9 +1127,13 @@ Stopwatch component provides a way to profile code.
 Summary:   Symfony Templating Component
 URL:       http://symfony.com/doc/current/components/templating.html
 
-Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+Requires:  %{name}-common =  %{version}-%{release}
+# Optional
+Requires:  php-PsrLog     >= %{psrlog_min_ver}
+Requires:  php-PsrLog     <  %{psrlog_max_ver}
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-ctype
+Requires:  php-hash
 Requires:  php-iconv
 Requires:  php-mbstring
 Requires:  php-pcre
@@ -1082,15 +1162,17 @@ Summary:   Symfony Translation Component
 # Optional
 Requires:  %{name}-config = %{version}-%{release}
 Requires:  %{name}-yaml   = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-dom
 Requires:  php-iconv
 Requires:  php-intl
+Requires:  php-json
 Requires:  php-libxml
 Requires:  php-mbstring
 Requires:  php-pcre
 Requires:  php-simplexml
 Requires:  php-spl
+Requires:  php-xml
 
 # PEAR
 Provides:  php-pear(%{pear_channel}/Translation) = %{version}
@@ -1108,14 +1190,16 @@ translated strings from these including support for pluralization.
 
 Summary:   Symfony Validator Component
 
+Requires:  %{name}-propertyaccess = %{version}-%{release}
 Requires:  %{name}-translation    = %{version}-%{release}
 # Optional
 Requires:  %{name}-config         = %{version}-%{release}
 Requires:  %{name}-httpfoundation = %{version}-%{release}
 Requires:  %{name}-intl           = %{version}-%{release}
 Requires:  %{name}-yaml           = %{version}-%{release}
-Requires:  php-pear(pear.doctrine-project.org/DoctrineCommon)
-# phpcompatinfo
+Requires:  php-pear(pear.doctrine-project.org/DoctrineCommon) >= %{doctrine_common_min_ver}
+Requires:  php-pear(pear.doctrine-project.org/DoctrineCommon) <  %{doctrine_common_max_ver}
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-ctype
 Requires:  php-date
 Requires:  php-filter
@@ -1137,7 +1221,8 @@ This component is based on the JSR-303 Bean Validation specification and
 enables specifying validation rules for classes using XML, YAML, PHP or
 annotations, which can then be checked against instances of these classes.
 
-Optional: APC
+Optional:
+* APC (php-pecl-apcu)
 
 # ------------------------------------------------------------------------------
 
@@ -1147,7 +1232,7 @@ Summary:   Symfony Yaml Component
 URL:       http://symfony.com/doc/current/components/yaml/index.html
 
 Requires:  %{name}-common = %{version}-%{release}
-# phpcompatinfo
+# phpcompatinfo (computed from v2.4.2)
 Requires:  php-ctype
 Requires:  php-date
 Requires:  php-iconv
@@ -1227,31 +1312,41 @@ AUTOLOADER
 sed 's/colors="true"/colors="false"/' phpunit.xml.dist > phpunit.xml
 
 # Skip tests that rely on external resources
-sed -i \
-    's/function testNonSeekableStream/function SKIP_testNonSeekableStream/' \
-    src/Symfony/Component/Finder/Tests/FinderTest.php
-sed -i \
-    's/function testCopyForOriginUrlsAndExistingLocalFileDefaultsToNotCopy/function SKIP_testCopyForOriginUrlsAndExistingLocalFileDefaultsToNotCopy/' \
-    src/Symfony/Component/Filesystem/Tests/FilesystemTest.php
+sed 's/function testNonSeekableStream/function SKIP_testNonSeekableStream/' \
+    -i src/Symfony/Component/Finder/Tests/FinderTest.php
+sed 's/function testCopyForOriginUrlsAndExistingLocalFileDefaultsToNotCopy/function SKIP_testCopyForOriginUrlsAndExistingLocalFileDefaultsToNotCopy/' \
+    -i src/Symfony/Component/Filesystem/Tests/FilesystemTest.php
+
+# Skip tests that have intermittent failures
+sed 's/function testCheckTimeoutOnStartedProcess/function SKIP_testCheckTimeoutOnStartedProcess/' \
+    -i src/Symfony/Component/Process/Tests/AbstractProcessTest.php \
+    -i src/Symfony/Component/Process/Tests/SigchildDisabledProcessTest.php
 
 # Temporarily skip tests that are known to fail
+rm -rf src/Symfony/Bridge/Doctrine/Tests/DataFixtures \
+       src/Symfony/Bundle/SecurityBundle/Tests/Functional/SecurityRoutingIntegrationTest.php \
+       src/Symfony/Component/HttpKernel/Tests/KernelTest.php
+sed 's/function testClassNotFound/ function SKIP_testClassNotFound/' \
+    -i src/Symfony/Component/Debug/Tests/FatalErrorHandler/ClassNotFoundFatalErrorHandlerTest.php
+sed 's/function testTTYCommand/function SKIP_testTTYCommand/' \
+    -i src/Symfony/Component/Process/Tests/AbstractProcessTest.php
 %if 0%{?fedora} > 20
-sed -i \
-    's/function testTrimUtf8/function SKIP_testTrimUtf8/' \
-    src/Symfony/Component/Form/Tests/Extension/Core/EventListener/TrimListenerTest.php
+sed 's/function testTrimUtf8/function SKIP_testTrimUtf8/' \
+    -i src/Symfony/Component/Form/Tests/Extension/Core/EventListener/TrimListenerTest.php
 %endif
-%if 0%{?el6}
-sed -i \
-    's/function testForm/function SKIP_testForm/' \
-    src/Symfony/Component/DomCrawler/Tests/CrawlerTest.php
-sed -i \
-    -e 's/function testConstructorHandlesFormAttribute/function SKIP_testConstructorHandlesFormAttribute/' \
+%if 0%{?el6}%{?el7}
+sed 's/function testForm/function SKIP_testForm/' \
+    -i src/Symfony/Component/DomCrawler/Tests/CrawlerTest.php
+sed -e 's/function testConstructorHandlesFormAttribute/function SKIP_testConstructorHandlesFormAttribute/' \
     -e 's/function testConstructorHandlesFormValues/function SKIP_testConstructorHandlesFormValues/' \
-    src/Symfony/Component/DomCrawler/Tests/FormTest.php
-sed -i \
-    's/function testSetContent/function SKIP_testSetContent/' \
-    src/Symfony/Component/HttpFoundation/Tests/JsonResponseTest.php
+    -i src/Symfony/Component/DomCrawler/Tests/FormTest.php
+sed 's/function testSetContent/function SKIP_testSetContent/' \
+    -i src/Symfony/Component/HttpFoundation/Tests/JsonResponseTest.php
 rm -f src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/NativeFileSessionHandlerTest.php
+%endif
+%if 0%{?el7}
+sed 's/function testValidatesCachedResponsesWithLastModifiedAndNoFreshnessInformation/function SKIP_testValidatesCachedResponsesWithLastModifiedAndNoFreshnessInformation/' \
+    -i src/Symfony/Component/HttpKernel/Tests/HttpCache/HttpCacheTest.php
 %endif
 
 %if %{with_tests}
@@ -1577,6 +1672,21 @@ done
 
 # ------------------------------------------------------------------------------
 
+%files expressionlanguage
+
+%doc src/Symfony/Component/ExpressionLanguage/LICENSE
+%doc src/Symfony/Component/ExpressionLanguage/*.md
+%doc src/Symfony/Component/ExpressionLanguage/composer.json
+
+%{symfony_dir}/Component/ExpressionLanguage
+%exclude %{symfony_dir}/Component/ExpressionLanguage/LICENSE
+%exclude %{symfony_dir}/Component/ExpressionLanguage/*.md
+%exclude %{symfony_dir}/Component/ExpressionLanguage/composer.json
+%exclude %{symfony_dir}/Component/ExpressionLanguage/phpunit.*
+%exclude %{symfony_dir}/Component/ExpressionLanguage/Tests
+
+# ------------------------------------------------------------------------------
+
 %files filesystem
 
 %doc src/Symfony/Component/Filesystem/LICENSE
@@ -1848,6 +1958,12 @@ done
 # ##############################################################################
 
 %changelog
+* Mon Feb 17 2014 Shawn Iwinski <shawn.iwinski@gmail.com> 2.4.2-1
+- Updated to 2.4.2 (BZ #1038134)
+- Re-enabled tests
+- Added expressionlanguage component sub-pkg
+- Added provides for security component composer sub-pkgs
+
 * Mon Jan 13 2014 Remi Collet <remi@fedoraproject.org> 2.3.9-0
 - EPEL-7 bootstrap build
 
