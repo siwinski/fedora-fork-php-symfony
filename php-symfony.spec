@@ -49,7 +49,7 @@
 
 Name:          php-symfony
 Version:       %{github_version}
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       PHP framework for web projects
 
 Group:         Development/Libraries
@@ -1955,6 +1955,9 @@ done
 # ##############################################################################
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.4.4-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Wed Apr 30 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 2.4.4-1
 - Updated to 2.4.4 (BZ #1038134)
 - Updated Doctrine dependencies
