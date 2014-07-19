@@ -64,8 +64,6 @@
 # Build using "--without tests" to disable tests
 %global with_tests   %{?_without_tests:0}%{!?_without_tests:1}
 
-%{!?_licensedir:%global license %%doc}
-
 Name:          php-%{composer_project}
 Version:       %{github_version}
 Release:       2%{?dist}
@@ -1554,6 +1552,8 @@ exit $RET
 : Tests skipped
 %endif
 
+
+%{!?_licensedir:%global license %%doc}
 
 %files
 %if 0%{?fedora} >= 20
