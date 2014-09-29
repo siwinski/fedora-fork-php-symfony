@@ -2151,6 +2151,7 @@ exit $RET
 
 # ##############################################################################
 
+
 %changelog
 * Mon Sep 29 2014 Remi Collet <remi@fedoraproject.org> - 2.5.5-1
 - update to 2.5.5
