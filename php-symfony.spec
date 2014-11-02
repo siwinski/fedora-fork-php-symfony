@@ -66,7 +66,7 @@
 
 Name:          php-%{composer_project}
 Version:       %{github_version}
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       PHP framework for web projects
 
 Group:         Development/Libraries
@@ -1530,10 +1530,6 @@ sed 's/function testTTYCommandExitCode/function SKIP_testTTYCommandExitCode/' \
     -i src/Symfony/Component/Process/Tests/SigchildDisabledProcessTest.php
 sed 's/function testStrict/function SKIP_testStrict/' \
     -i src/Symfony/Component/Validator/Tests/Constraints/EmailValidatorTest.php
-rm -f \
-    src/Symfony/Component/Intl/Tests/Data/Provider/Json/JsonLocaleDataProviderTest.php \
-    src/Symfony/Component/Intl/Tests/Data/Provider/Json/JsonRegionDataProviderTest.php \
-    src/Symfony/Component/Intl/Tests/Data/Provider/Json/JsonScriptDataProviderTest.php
 %if 0%{?el6}
 sed 's/function testForm/function SKIP_testForm/' \
     -i src/Symfony/Component/DomCrawler/Tests/CrawlerTest.php
@@ -1549,7 +1545,7 @@ for PKG in src/Symfony/*/*; do
     echo -e "\n>>>>>>>>>>>>>>>>>>>>>>> ${PKG}\n"
     %{__phpunit} \
         --include-path ./src \
-        --exclude-group tty,benchmark \
+        --exclude-group tty,benchmark,intl-data \
         -d date.timezone="UTC" \
         $PKG || RET=1
 done
@@ -2156,6 +2152,9 @@ exit $RET
 # ##############################################################################
 
 %changelog
+* Sun Nov 02 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 2.5.6-2
+- Exclude "intl-data" test group instead of removing test files
+
 * Sun Nov 02 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 2.5.6-1
 - Updated to 2.5.6 (BZ #1157502)
 - "php-twig-Twig" dependency updated to "php-composer(twig/twig)"
