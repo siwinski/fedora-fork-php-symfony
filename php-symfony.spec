@@ -12,8 +12,8 @@
 
 %global github_owner     symfony
 %global github_name      symfony
-%global github_version   2.5.6
-%global github_commit    1a1b1e528935f15dd76169f8b1dc3ef97f0d6210
+%global github_version   2.5.7
+%global github_commit    dd4254fc39a702af22cd886a6790769541469da1
 
 %global composer_vendor  symfony
 %global composer_project symfony
@@ -39,6 +39,9 @@
 # "doctrine/orm": "~2.2,>=2.2.3" (composer.json)
 %global doctrine_orm_min_ver 2.2.3
 %global doctrine_orm_max_ver 3.0
+# "egulias/email-validator": "~1.2"
+%global email_validator_min_ver 1.2
+%global email_validator_max_ver 2.0
 # "ircmaxell/password-compat": "1.0.*" (composer.json)
 %global password_compat_min_ver 1.0.0
 %global password_compat_max_ver 1.1.0
@@ -66,7 +69,7 @@
 
 Name:          php-%{composer_project}
 Version:       %{github_version}
-Release:       2%{?dist}
+Release:       1%{?dist}
 Summary:       PHP framework for web projects
 
 Group:         Development/Libraries
@@ -84,31 +87,32 @@ Source2:       autoloader-2.5.0BETA2.tgz
 BuildArch:     noarch
 %if %{with_tests}
 # For tests
-BuildRequires: php(language)                        >= %{php_min_ver}
-BuildRequires: php-composer(doctrine/annotations)   >= %{doctrine_annotations_min_ver}
-BuildRequires: php-composer(doctrine/annotations)   <  %{doctrine_annotations_max_ver}
-BuildRequires: php-composer(doctrine/cache)         >= %{doctrine_cache_min_ver}
-BuildRequires: php-composer(doctrine/cache)         <  %{doctrine_cache_max_ver}
-BuildRequires: php-composer(doctrine/common)        >= %{doctrine_common_min_ver}
-BuildRequires: php-composer(doctrine/common)        <  %{doctrine_common_max_ver}
-BuildRequires: php-composer(doctrine/data-fixtures) >= %{doctrine_datafixtures_min_ver}
-BuildRequires: php-composer(doctrine/data-fixtures) <  %{doctrine_datafixtures_max_ver}
-BuildRequires: php-composer(doctrine/dbal)          >= %{doctrine_dbal_min_ver}
-BuildRequires: php-composer(doctrine/dbal)          <  %{doctrine_dbal_max_ver}
-BuildRequires: php-composer(doctrine/orm)           >= %{doctrine_orm_min_ver}
-BuildRequires: php-composer(doctrine/orm)           <  %{doctrine_orm_max_ver}
-BuildRequires: php-composer(monolog/monolog)        >= %{monolog_min_ver}
-BuildRequires: php-composer(monolog/monolog)        <  %{monolog_max_ver}
-BuildRequires: php-composer(psr/log)                >= %{psrlog_min_ver}
-BuildRequires: php-composer(psr/log)                <  %{psrlog_max_ver}
-BuildRequires: php-composer(twig/twig)              >= %{twig_min_ver}
-BuildRequires: php-composer(twig/twig)              <  %{twig_max_ver}
+BuildRequires: php(language)                         >= %{php_min_ver}
+BuildRequires: php-composer(doctrine/annotations)    >= %{doctrine_annotations_min_ver}
+BuildRequires: php-composer(doctrine/annotations)    <  %{doctrine_annotations_max_ver}
+BuildRequires: php-composer(doctrine/cache)          >= %{doctrine_cache_min_ver}
+BuildRequires: php-composer(doctrine/cache)          <  %{doctrine_cache_max_ver}
+BuildRequires: php-composer(doctrine/common)         >= %{doctrine_common_min_ver}
+BuildRequires: php-composer(doctrine/common)         <  %{doctrine_common_max_ver}
+BuildRequires: php-composer(doctrine/data-fixtures)  >= %{doctrine_datafixtures_min_ver}
+BuildRequires: php-composer(doctrine/data-fixtures)  <  %{doctrine_datafixtures_max_ver}
+BuildRequires: php-composer(doctrine/dbal)           >= %{doctrine_dbal_min_ver}
+BuildRequires: php-composer(doctrine/dbal)           <  %{doctrine_dbal_max_ver}
+BuildRequires: php-composer(doctrine/orm)            >= %{doctrine_orm_min_ver}
+BuildRequires: php-composer(doctrine/orm)            <  %{doctrine_orm_max_ver}
+BuildRequires: php-composer(egulias/email-validator) >= %{email_validator_min_ver}
+BuildRequires: php-composer(egulias/email-validator) <  %{email_validator_max_ver}
+BuildRequires: php-composer(monolog/monolog)         >= %{monolog_min_ver}
+BuildRequires: php-composer(monolog/monolog)         <  %{monolog_max_ver}
+BuildRequires: php-composer(psr/log)                 >= %{psrlog_min_ver}
+BuildRequires: php-composer(psr/log)                 <  %{psrlog_max_ver}
+BuildRequires: php-composer(twig/twig)               >= %{twig_min_ver}
+BuildRequires: php-composer(twig/twig)               <  %{twig_max_ver}
 BuildRequires: php-phpunit-PHPUnit
 %if "%{php_version}" < "5.5"
-BuildRequires: php-password-compat                  >= %{password_compat_min_ver}
-BuildRequires: php-password-compat                  <  %{password_compat_max_ver}
+BuildRequires: php-password-compat                   >= %{password_compat_min_ver}
+BuildRequires: php-password-compat                   <  %{password_compat_max_ver}
 %endif
-## TODO: "egulias/email-validator"
 ## TODO: "propel/propel1"
 ## TODO: "ocramius/proxy-manager"
 # For tests: phpcompatinfo (computed from version 2.5.6)
@@ -1378,11 +1382,12 @@ Requires:  php-composer(%{composer_vendor}/http-foundation)     = %{version}
 Requires:  php-composer(%{composer_vendor}/intl)                = %{version}
 Requires:  php-composer(%{composer_vendor}/property-access)     = %{version}
 Requires:  php-composer(%{composer_vendor}/yaml)                = %{version}
-Requires:  php-composer(doctrine/annotations) >= %{doctrine_annotations_min_ver}
-Requires:  php-composer(doctrine/annotations) <  %{doctrine_annotations_max_ver}
-Requires:  php-composer(doctrine/cache)       >= %{doctrine_cache_min_ver}
-Requires:  php-composer(doctrine/cache)       <  %{doctrine_cache_max_ver}
-## TODO: "egulias/email-validator"
+Requires:  php-composer(doctrine/annotations)    >= %{doctrine_annotations_min_ver}
+Requires:  php-composer(doctrine/annotations)    <  %{doctrine_annotations_max_ver}
+Requires:  php-composer(doctrine/cache)          >= %{doctrine_cache_min_ver}
+Requires:  php-composer(doctrine/cache)          <  %{doctrine_cache_max_ver}
+Requires:  php-composer(egulias/email-validator) >= %{email_validator_min_ver}
+Requires:  php-composer(egulias/email-validator) <  %{email_validator_max_ver}
 # phpcompatinfo (computed from version 2.5.6)
 Requires:  php-ctype
 Requires:  php-date
@@ -1506,9 +1511,6 @@ if [ -d %{phpdir}/PHPUnit ]; then
       %{phpdir}/PHPUnit/Autoload.php > PHPUnit/Autoload.php
 fi
 
-# Create PHPUnit config w/ colors turned off
-sed 's/colors="true"/colors="false"/' phpunit.xml.dist > phpunit.xml
-
 # Skip tests that rely on external resources
 rm -f src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/MongoDbSessionHandlerTest.php
 sed 's/function testNonSeekableStream/function SKIP_testNonSeekableStream/' \
@@ -1528,8 +1530,6 @@ sed 's/function testTTYCommand/function SKIP_testTTYCommand/' \
     -i src/Symfony/Component/Process/Tests/AbstractProcessTest.php
 sed 's/function testTTYCommandExitCode/function SKIP_testTTYCommandExitCode/' \
     -i src/Symfony/Component/Process/Tests/SigchildDisabledProcessTest.php
-sed 's/function testStrict/function SKIP_testStrict/' \
-    -i src/Symfony/Component/Validator/Tests/Constraints/EmailValidatorTest.php
 %if 0%{?el6}
 sed 's/function testForm/function SKIP_testForm/' \
     -i src/Symfony/Component/DomCrawler/Tests/CrawlerTest.php
@@ -1546,7 +1546,6 @@ for PKG in src/Symfony/*/*; do
     %{__phpunit} \
         --include-path ./src \
         --exclude-group tty,benchmark,intl-data \
-        -d date.timezone="UTC" \
         $PKG || RET=1
 done
 exit $RET
@@ -2152,6 +2151,10 @@ exit $RET
 # ##############################################################################
 
 %changelog
+* Thu Nov 20 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 2.5.7-1
+- Updated to 2.5.7 (BZ #1166396)
+- Added php-composer(egulias/email-validator) dependency
+
 * Sun Nov 02 2014 Shawn Iwinski <shawn.iwinski@gmail.com> - 2.5.6-2
 - Exclude "intl-data" test group instead of removing test files
 
