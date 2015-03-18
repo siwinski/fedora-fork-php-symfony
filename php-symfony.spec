@@ -1,7 +1,7 @@
 #
 # RPM spec file for php-symfony
 #
-# Copyright (c) 2013-2014 Shawn Iwinski <shawn.iwinski@gmail.com>
+# Copyright (c) 2013-2015 Shawn Iwinski <shawn.iwinski@gmail.com>
 #                         Remi Collet <remi@fedoraproject.org>
 #
 # License: MIT
@@ -12,8 +12,9 @@
 
 %global github_owner     symfony
 %global github_name      symfony
-%global github_version   2.5.8
-%global github_commit    00da57005c9c76773670f4d958dd95e9f4ae72f6
+%global github_version   2.5.10
+%global github_commit    6ffe6437a9e734eabd6d092387f065bebfefcd24
+%global github_short     %(c=%{github_commit}; echo ${c:0:7})
 
 %global composer_vendor  symfony
 %global composer_project symfony
@@ -75,7 +76,7 @@ Summary:       PHP framework for web projects
 Group:         Development/Libraries
 License:       MIT
 URL:           http://symfony.com
-Source0:       https://github.com/%{github_owner}/%{github_name}/archive/%{github_commit}/%{name}-%{github_version}-%{github_commit}.tar.gz
+Source0:       https://github.com/%{github_owner}/%{github_name}/archive/%{github_commit}/%{name}-%{github_version}-%{github_short}.tar.gz
 
 # Run this command to download the PEAR packages
 # and retrieve files missing from github archive
@@ -1536,6 +1537,8 @@ sed 's/function testClassNotFound/ function SKIP_testClassNotFound/' \
     -i src/Symfony/Component/Debug/Tests/FatalErrorHandler/ClassNotFoundFatalErrorHandlerTest.php
 sed 's/function testDumpRelativeDir/function SKIP_testDumpRelativeDir/' \
     -i src/Symfony/Component/DependencyInjection/Tests/Dumper/PhpDumperTest.php
+sed 's/function testHandleClassNotFound/function SKIP_testHandleClassNotFound/' \
+    -i src/Symfony/Component/Debug/Tests/FatalErrorHandler/ClassNotFoundFatalErrorHandlerTest.php
 
 %if 0%{?el6}
 sed 's/function testForm/function SKIP_testForm/' \
@@ -2063,7 +2066,8 @@ exit $RET
 %exclude %{symfony_dir}/Component/Security/*.md
 %exclude %{symfony_dir}/Component/Security/composer.json
 %exclude %{symfony_dir}/Component/Security/phpunit.*
-%exclude %{symfony_dir}/Component/Security/Tests
+%exclude %{symfony_dir}/Component/Security/*/phpunit.*
+#exclude %{symfony_dir}/Component/Security/Tests
 %exclude %{symfony_dir}/Component/Security/*/Tests
 
 # ------------------------------------------------------------------------------
@@ -2159,6 +2163,9 @@ exit $RET
 # ##############################################################################
 
 %changelog
+* Wed Mar 18 2015 Remi Collet <remi@fedoraproject.org> - 2.5.10-1
+- Update to 2.5.10
+
 * Mon Dec 15 2014 Remi Collet <remi@fedoraproject.org> - 2.5.8-1
 - Update to 2.5.8
 
