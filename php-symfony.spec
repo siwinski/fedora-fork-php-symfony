@@ -59,8 +59,14 @@
 %global twig_min_ver 1.12
 %global twig_max_ver 2.0
 
+%if 0%{?fedora} < 21 && 0%{?rhel} < 7
+# Build using "--with tests" to enable tests
+# Disabled by default with old PHPUnit version
+%global with_tests   %{?_with_tests:1}%{!?_with_tests:0}
+%else
 # Build using "--without tests" to disable tests
 %global with_tests   %{?_without_tests:0}%{!?_without_tests:1}
+%endif
 
 %{!?phpdir:     %global phpdir     %{_datadir}/php}
 %{!?__phpunit:  %global __phpunit  %{_bindir}/phpunit}
